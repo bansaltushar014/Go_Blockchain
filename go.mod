@@ -9,6 +9,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.2 // indirect
 	github.com/holiman/uint256 v1.2.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect

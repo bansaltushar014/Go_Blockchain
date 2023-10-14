@@ -4,13 +4,20 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/sha256"
 	"errors"
 	"fmt"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/crypto"
 )
+
+type PublicKey struct {
+	Key *ecdsa.PublicKey
+}
+
+type Signature struct {
+	R, S *big.Int
+}
 
 type Wallet struct {
 	PrivateKey *ecdsa.PrivateKey
@@ -58,7 +65,6 @@ func CreateWallet() (*Wallet, error) {
 
 	address, err := generateEthereumAddress(data)
 	if err != nil {
-		// fmt.Println("Error:", err)
 		return nil, errors.New(err.Error())
 	}
 
@@ -69,18 +75,19 @@ func CreateWallet() (*Wallet, error) {
 	}, nil
 }
 
-func (w *Wallet) SignMsg(msg string) ([32]byte, *big.Int, *big.Int) {
-	message := []byte(msg)
-	hash := sha256.Sum256(message)
-	r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, hash[:])
+func (w *Wallet) SignMsg(data []byte) ([]byte, *big.Int, *big.Int) {
+	// hash := sha256.Sum256(message)
+	// r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, hash[:])
+	r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, data)
+
 	if err != nil {
 		fmt.Println("Error signing the message:", err)
 	}
-	return hash, r, s
+	return data, r, s
 }
 
-func Verify(hash [32]byte, r *big.Int, s *big.Int, pubkey *ecdsa.PublicKey) bool {
-	valid := ecdsa.Verify(pubkey, hash[:], r, s)
+func Verify(data []byte, r *big.Int, s *big.Int, pubkey *ecdsa.PublicKey) bool {
+	valid := ecdsa.Verify(pubkey, data[:], r, s)
 	if valid {
 		return true
 	} else {

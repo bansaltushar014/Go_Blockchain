@@ -1,30 +1,20 @@
 package core
 
 import (
-	"crypto/ecdsa"
 	"crypto/sha256"
 	"fmt"
-	"math/big"
 
 	cryptoX "github.com/bansaltushar014/go-blockchain-l2/crypto"
 )
 
-type PublicKey struct {
-	key *ecdsa.PublicKey
-}
-
-type Signature struct {
-	r, s *big.Int
-}
-
 type Transaction struct {
 	data      []byte
-	publicKey PublicKey
-	signature *Signature
+	publicKey cryptoX.PublicKey
+	signature *cryptoX.Signature
 }
 
+// This is hash function , not encode function. Change it in l2
 func excodeTx(data []byte) []byte {
-	fmt.Println("fmt")
 	hasher := sha256.New()
 	_, err := hasher.Write(data)
 	if err != nil {
@@ -35,11 +25,35 @@ func excodeTx(data []byte) []byte {
 	return hashSum
 }
 
-// Start from here where you are stuck, you need to move that package from this package to other side
-func (tx *Transaction) signTx(w *cryptoX.Wallet) *Transaction {
+func NewTransaction() *Transaction {
+	return createTransaction([]byte("First Transaction!"))
+}
+
+type Trans struct{}
+
+func (t *Trans) CreateRandomTx(data []byte) *Transaction {
+	return createTransaction(data)
+}
+
+func createTransaction(data []byte) *Transaction {
+	w, _ := cryptoX.CreateWallet()
+	_, r, s := w.SignMsg([]byte(data))
+	return &Transaction{
+		data:      data,
+		publicKey: cryptoX.PublicKey{w.PublicKey},
+		signature: &cryptoX.Signature{r, s},
+	}
+}
+
+func (tx *Transaction) signTx(w *cryptoX.Wallet) error {
 	// hash := sha256.Sum256(tx.data)
-	_, r, s := w.SignMsg(string(tx.data))
-	tx.signature = &Signature{r, s}
-	tx.publicKey = PublicKey{w.PublicKey}
-	return tx
+	_, r, s := w.SignMsg(tx.data)
+	tx.signature = &cryptoX.Signature{r, s}
+	tx.publicKey = cryptoX.PublicKey{w.PublicKey}
+	return nil
+}
+
+func (tx *Transaction) verify() bool {
+	ok := cryptoX.Verify(tx.data, tx.signature.R, tx.signature.S, tx.publicKey.Key)
+	return ok
 }
