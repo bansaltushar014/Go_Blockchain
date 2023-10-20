@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"sync"
 
 	"crypto/sha256"
 
@@ -12,6 +13,7 @@ type Blockchain struct {
 	store     Storage
 	header    []*Header
 	validator Validator
+	lock      sync.RWMutex
 }
 
 // Storage
@@ -83,10 +85,14 @@ func NewBlockchain(genesis *Block) (*Blockchain, error) {
 }
 
 func (bl *Blockchain) GetHeader() *Header {
+	bl.lock.Lock()
+	defer bl.lock.Unlock()
 	return bl.header[bl.Height()]
 }
 
 func (bl *Blockchain) SetValidator(Val Validator) {
+	bl.lock.Lock()
+	defer bl.lock.Unlock()
 	bl.validator = Val
 }
 
@@ -95,7 +101,8 @@ func (bl *Blockchain) AddBlock(b *Block) error {
 	// if err := bl.validator.ValidateBlock(b); err != nil {
 	// 	return err
 	// }
-
+	bl.lock.Lock()
+	defer bl.lock.Unlock()
 	//check block already exists
 	blv := BlockValidator{bl}
 	if err := blv.ValidateBlock(b); err != nil {
@@ -110,10 +117,14 @@ func (bl *Blockchain) HasBlock(height int) bool {
 }
 
 func (bl *Blockchain) Height() int {
+	bl.lock.Lock()
+	defer bl.lock.Unlock()
 	return len(bl.header) - 1
 }
 
 func (bc *Blockchain) addBlockWithoutValidation(b *Block) error {
+	bc.lock.Lock()
+	defer bc.lock.Unlock()
 	bc.header = append(bc.header, b.Header)
 
 	logrus.WithFields(logrus.Fields{

@@ -15,6 +15,10 @@ type PublicKey struct {
 	Key *ecdsa.PublicKey
 }
 
+type PrivateKey struct {
+	Key *ecdsa.PrivateKey
+}
+
 type Signature struct {
 	R, S *big.Int
 }

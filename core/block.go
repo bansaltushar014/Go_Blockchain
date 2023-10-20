@@ -31,9 +31,9 @@ type Block struct {
 const txLimit = 5 // Max 5 tx can go inside a block
 
 func CreateGenesisBlock() *Block {
-	tx := excodeTx([]byte("First Transaction"))
+	tx := ExcodeTx([]byte("First Transaction"))
 	transaction := Transaction{
-		data: tx,
+		Data: tx,
 	}
 	block := Block{
 		Header: &Header{
@@ -49,9 +49,9 @@ func CreateGenesisBlock() *Block {
 }
 
 func CreateRandomBlock() *Block {
-	tx := excodeTx([]byte(time.Now().String()))
+	tx := ExcodeTx([]byte(time.Now().String()))
 	transaction := Transaction{
-		data: tx,
+		Data: tx,
 	}
 	block := Block{
 		Header: &Header{

@@ -42,27 +42,27 @@ func TestBlockSignndVerify(t *testing.T) {
 }
 
 func createRandomTransaction() *Transaction {
-	tx := excodeTx([]byte(time.Now().String()))
+	tx := ExcodeTx([]byte(time.Now().String()))
 	transaction := Transaction{
-		data: tx,
+		Data: tx,
 	}
 	return &transaction
 }
 
 func createRandomTransactionWithSignature() *Transaction {
 	W, _ := cryptoX.CreateWallet()
-	tx := excodeTx([]byte(time.Now().String()))
+	tx := ExcodeTx([]byte(time.Now().String()))
 	transaction := Transaction{
-		data: tx,
+		Data: tx,
 	}
 	transaction.signTx(W)
 	return &transaction
 }
 
 func randomBlockCreation(height int, prevHash [32]uint8) *Block {
-	tx := excodeTx([]byte(time.Now().String()))
+	tx := ExcodeTx([]byte(time.Now().String()))
 	transaction := Transaction{
-		data: tx,
+		Data: tx,
 	}
 	block := Block{
 		Header: &Header{
