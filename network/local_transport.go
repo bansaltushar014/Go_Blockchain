@@ -37,8 +37,17 @@ func (a *LocalTransport) SendMessage(addr string, message string) error {
 	}
 
 	peer.consumeCh <- RPC{
-		netAddress: addr,
-		payload:    message,
+		From:    addr,
+		Payload: message,
+	}
+	return nil
+}
+
+func (a *LocalTransport) Broadcast(payload []byte) error {
+	for _, peer := range a.peers {
+		if err := a.SendMessage(peer.GetAddress(), string(payload)); err != nil {
+			return err
+		}
 	}
 	return nil
 }

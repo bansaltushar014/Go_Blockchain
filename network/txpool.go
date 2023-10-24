@@ -20,9 +20,10 @@ func NewTxPool() *TxPool {
 	}
 }
 
-func (txp *TxPool) Add(tx *core.Transaction) {
+func (txp *TxPool) Add(tx *core.Transaction) error {
 	hash := tx.Hash(tx.Data)
 	txp.transactions[hash] = tx
+	return nil
 }
 
 func (txp *TxPool) Has(hash [32]uint8) bool {

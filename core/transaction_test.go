@@ -11,7 +11,7 @@ func TestSignAndVerifyTxn(t *testing.T) {
 	tx := NewTransaction()
 	tx.SetFirstSeen(time.Now())
 	assert.NotEmpty(t, tx)
-	bool := tx.verify()
+	bool := tx.Verify()
 	assert.True(t, bool)
 }
 
@@ -20,7 +20,7 @@ func TestCreateTxAndVerify(t *testing.T) {
 	txx := t1.CreateRandomTx([]byte("First Transaction"))
 	txx.SetFirstSeen(time.Now())
 	assert.NotEmpty(t, txx)
-	bool := txx.verify()
+	bool := txx.Verify()
 	assert.True(t, bool)
 
 }

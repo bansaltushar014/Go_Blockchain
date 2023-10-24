@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/gob"
 	"fmt"
 	"time"
@@ -28,6 +29,20 @@ func ExcodeTx(data []byte) []byte {
 	}
 	hashSum := hasher.Sum(nil)
 	return hashSum
+}
+
+func (tx *Transaction) Encoded(data []byte) string {
+	encoded := base64.StdEncoding.EncodeToString(data)
+	return encoded
+}
+
+func (tx *Transaction) Decoded(str string) ([]byte, error) {
+	decoded, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		fmt.Println("Decoding error:", err)
+		return nil, err
+	}
+	return decoded, nil
 }
 
 func (tx *Transaction) Hash(data []byte) [32]uint8 {
@@ -72,7 +87,7 @@ func (tx *Transaction) signTx(w *cryptoX.Wallet) error {
 	return nil
 }
 
-func (tx *Transaction) verify() bool {
+func (tx *Transaction) Verify() bool {
 	ok := cryptoX.Verify(tx.Data, tx.signature.R, tx.signature.S, tx.publicKey.Key)
 	return ok
 }

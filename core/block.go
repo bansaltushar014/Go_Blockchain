@@ -100,7 +100,7 @@ func (b *Block) Verify() bool {
 	}
 
 	for _, v := range b.Transactions {
-		ok := v.verify()
+		ok := v.Verify()
 		if ok != true {
 			return ok
 		}
